@@ -284,7 +284,7 @@ Recommended test scenarios:
 
 **GOKUL S**
 
-GitHub: [@GOKUL-S2648](https://github.com/GOKUL-S2648)
+GitHub: [@GOKUL-S2648](https://github.com/GOKUL-S2648/Certificate-bulk-generator)
 
 ---
 
