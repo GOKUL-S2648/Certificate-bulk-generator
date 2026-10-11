@@ -1,0 +1,6 @@
+{
+  "name": "Bulk Certificate Generator API",
+  "description": "High-throughput asynchronous bulk certificate generation API with relational tracking, robust failure isolation, verification engine, and interactive developer console.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
