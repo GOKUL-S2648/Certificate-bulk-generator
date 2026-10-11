@@ -1,5 +1,15 @@
+
 import React from 'react';
-import { Award, Terminal, CheckCircle2, FileCode, BookOpen, Layers, Plus, LogOut } from 'lucide-react';
+import {
+  Award,
+  Terminal,
+  CheckCircle2,
+  FileCode,
+  BookOpen,
+  Layers,
+  Plus,
+  LogOut,
+} from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
 interface HeaderProps {
@@ -30,88 +40,103 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-8 h-16">
-          {/* Zone 1: Single Brand Wordmark */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Award className="w-4 h-4" />
-            </div>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveTab('overview');
-              }}
-              className="text-lg font-bold tracking-tight text-white whitespace-nowrap hover:text-amber-400 transition-colors"
-            >
-              CertifyBulk API
-            </a>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-[#e5e3d9] bg-[#fffdf8]/95 text-[#26352b] backdrop-blur-xl">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+        <div className="flex h-[72px] items-center justify-between gap-4">
+          {/* Brand */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('overview')}
+            className="flex shrink-0 items-center gap-3 text-left"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#dce4d2] bg-[#e9eddf] text-[#405b43]">
+              <Award className="h-5 w-5" />
+            </span>
 
-          {/* Zone 2: Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 overflow-x-auto py-1">
+            <span>
+              <span className="block whitespace-nowrap text-base font-bold tracking-tight text-[#26352b] sm:text-lg">
+                Certify<span className="text-[#607c60]">Bulk</span>
+              </span>
+              <span className="hidden text-[9px] uppercase tracking-[0.16em] text-[#898b80] sm:block">
+                Certificates, simplified
+              </span>
+            </span>
+          </button>
+
+          {/* Desktop navigation */}
+          <nav className="hidden items-center gap-1 overflow-x-auto py-1 xl:flex">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
+
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-medium transition-all ${
                     isActive
-                      ? 'bg-slate-800 text-white border border-slate-700 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                      ? 'border-[#dce4d2] bg-[#e9eddf] text-[#405b43]'
+                      : 'border-transparent text-[#77796e] hover:border-[#e8e6dc] hover:bg-[#f6f3eb] hover:text-[#26352b]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="h-3.5 w-3.5" />
                   <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* Zone 3: Primary Action & Authentication */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Actions and user profile */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <button
+              type="button"
               onClick={onNewJobClick}
-              className="flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-900 bg-amber-400 rounded-lg hover:bg-amber-300 transition-colors whitespace-nowrap shrink-0 shadow-xs active:scale-[0.98] cursor-pointer"
+              className="flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#405b43] px-3 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#304a35] active:scale-[0.98] sm:px-4"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>New Batch Job</span>
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">New Batch Job</span>
+              <span className="sm:hidden">New Batch</span>
             </button>
 
             {user ? (
-              <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              <div className="flex items-center gap-2 border-l border-[#e5e3d9] pl-2 sm:pl-3">
                 {user.user_metadata?.avatar_url ? (
                   <img
                     src={user.user_metadata.avatar_url}
                     alt={user.email || 'User'}
-                    className="w-7 h-7 rounded-full border border-slate-700 object-cover"
+                    className="h-8 w-8 rounded-full border border-[#dce4d2] object-cover"
                   />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 text-xs font-semibold">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dce4d2] bg-[#e9eddf] text-xs font-semibold text-[#405b43]">
                     {(user.email?.[0] || 'U').toUpperCase()}
-                  </div>
+                  </span>
                 )}
-                <span className="hidden xl:inline-block text-xs text-slate-300 max-w-[130px] truncate" title={user.email}>
+
+                <span
+                  className="hidden max-w-[125px] truncate text-xs text-[#60685c] 2xl:inline-block"
+                  title={user.email}
+                >
                   {user.user_metadata?.full_name || user.email}
                 </span>
+
                 {onSignOut && (
                   <button
+                    type="button"
                     onClick={onSignOut}
                     title="Sign Out"
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
+                    aria-label="Sign out"
+                    className="rounded-lg p-2 text-[#77796e] transition hover:bg-[#f8e9e5] hover:text-[#b5473c]"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="h-4 w-4" />
                   </button>
                 )}
               </div>
             ) : onSignIn ? (
               <button
+                type="button"
                 onClick={onSignIn}
-                className="text-xs text-amber-400 hover:text-amber-300 font-medium px-2.5 py-1.5 rounded-md hover:bg-slate-800 transition-colors cursor-pointer"
+                className="rounded-xl px-3 py-2 text-xs font-semibold text-[#405b43] transition hover:bg-[#e9eddf]"
               >
                 Sign In
               </button>
@@ -119,27 +144,29 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation bar */}
-        <div className="lg:hidden flex items-center gap-1 overflow-x-auto py-2 border-t border-slate-800/80 no-scrollbar">
+        {/* Responsive navigation */}
+        <nav className="no-scrollbar flex gap-1 overflow-x-auto border-t border-[#eeece3] py-2 xl:hidden">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap shrink-0 ${
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition ${
                   isActive
-                    ? 'bg-slate-800 text-white'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#e9eddf] text-[#405b43]'
+                    : 'text-[#77796e] hover:bg-[#f6f3eb] hover:text-[#26352b]'
                 }`}
               >
-                <Icon className="w-3 h-3" />
+                <Icon className="h-3.5 w-3.5" />
                 <span>{item.label}</span>
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
     </header>
   );

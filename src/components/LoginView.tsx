@@ -1,126 +1,250 @@
+
 import React, { useState } from 'react';
-import { Award, ShieldCheck, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase.ts';
+import {
+  Award,
+  ShieldCheck,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+  Loader2,
+} from 'lucide-react';
+
+import {
+  supabase,
+  isSupabaseConfigured,
+} from '../lib/supabase.ts';
 
 interface LoginViewProps {
   onGuestContinue?: () => void;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onGuestContinue }) => {
+export const LoginView: React.FC<LoginViewProps> = ({
+  onGuestContinue,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleGoogleLogin = async () => {
+    if (!isSupabaseConfigured) {
+      setError(
+        'Supabase is not configured. Please check your environment variables.',
+      );
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      });
+      const { error: authError } =
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin,
+          },
+        });
 
       if (authError) {
         setError(authError.message);
         setLoading(false);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unable to start Google sign-in. Please try again.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Unable to start Google sign-in. Please try again.';
+
       setError(message);
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-slate-900 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-12">
-      <section className="w-full max-w-md bg-white border border-slate-200/80 rounded-2xl shadow-2xl p-8 text-center backdrop-blur-sm">
-        <div className="mx-auto mb-5 h-14 w-14 flex items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 shadow-inner">
-          <Award className="h-8 w-8" />
+    <main className="cb-login-page">
+      <section className="cb-login-shell">
+        {/* Left image panel */}
+        <aside className="cb-login-image-panel">
+          <img
+            className="cb-login-image"
+            src="/certificate-login.png"
+            alt="Elegant certificate with gold and sage-green details"
+          />
+
+          <div className="cb-login-image-overlay">
+            <div className="cb-login-image-brand">
+              <span className="cb-login-image-logo">
+                <Award size={24} />
+              </span>
+
+              <div>
+                <strong>CertifyBulk</strong>
+                <span>CERTIFICATES, SIMPLIFIED</span>
+              </div>
+            </div>
+
+            <div className="cb-login-image-caption">
+              <span className="cb-login-image-kicker">
+                EVERY ACHIEVEMENT MATTERS
+              </span>
+
+              <h2>
+                Celebrate success.
+                <br />
+                <em>One certificate at a time.</em>
+              </h2>
+
+              <p>
+                Create, generate, and deliver beautiful certificates
+                with a simpler workflow.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        {/* Right login panel */}
+        <div className="cb-login-form-panel">
+          <button
+            type="button"
+            className="cb-login-back"
+            onClick={() => {
+              window.location.href = '/';
+            }}
+            aria-label="Return to home"
+          >
+            <ArrowLeft size={18} />
+          </button>
+
+          <div className="cb-login-content">
+            <div className="cb-login-brand">
+              <span className="cb-login-brand-icon">
+                <Award size={23} />
+              </span>
+
+              <span>
+                Certify<span>Bulk</span>
+              </span>
+            </div>
+
+            <div className="cb-login-heading">
+              <h1>Login to your account</h1>
+
+              <p>
+                Welcome back! Sign in to access your certificate
+                workspace.
+              </p>
+            </div>
+
+            <div className="cb-login-info">
+              <span className="cb-login-info-icon">
+                <ShieldCheck size={19} />
+              </span>
+
+              <div>
+                <strong>Your certificate workspace</strong>
+                <p>
+                  Manage batch jobs, issue certificates, and access
+                  generated PDF files.
+                </p>
+              </div>
+            </div>
+
+            {!isSupabaseConfigured && (
+              <div className="cb-login-error" role="alert">
+                <AlertCircle size={18} />
+
+                <p>
+                  Supabase configuration is missing. Check your
+                  environment variables and restart the development
+                  server.
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div className="cb-login-error" role="alert">
+                <AlertCircle size={18} />
+                <p>{error}</p>
+              </div>
+            )}
+
+            <div className="cb-login-actions">
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading || !isSupabaseConfigured}
+                className="cb-login-google"
+              >
+                {loading ? (
+                  <Loader2
+                    size={20}
+                    className="animate-spin"
+                  />
+                ) : (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 48 48"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill="#EA4335"
+                      d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.98 46.98 31.88 46.98 24.55Z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.45-4.89 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
+                    />
+                  </svg>
+                )}
+
+                <span>
+                  {loading
+                    ? 'Connecting to Google...'
+                    : 'Sign in with Google'}
+                </span>
+
+                {!loading && (
+                  <ArrowRight
+                    size={17}
+                    className="cb-login-google-arrow"
+                  />
+                )}
+              </button>
+            </div>
+
+            {onGuestContinue && (
+              <div className="cb-login-guest">
+                <span>Want to explore first?</span>
+
+                <button
+                  type="button"
+                  onClick={onGuestContinue}
+                >
+                  Continue as guest
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
+
+            <div className="cb-login-security">
+              <ShieldCheck size={16} />
+              <span>Secured with Supabase Authentication</span>
+            </div>
+          </div>
+
+          <footer className="cb-login-footer">
+            <span>© {new Date().getFullYear()} CertifyBulk</span>
+            <span>Certificates, simplified.</span>
+          </footer>
         </div>
-
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          CertifyBulk API
-        </h1>
-
-        <p className="mt-1.5 text-sm text-slate-500">
-          High-Throughput Certificate Generator &amp; Verification Engine
-        </p>
-
-        <div className="mt-8 text-left bg-slate-50 rounded-xl p-4 border border-slate-100">
-          <h2 className="text-sm font-semibold text-slate-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-0.5 text-xs text-slate-500">
-            Authenticate using Google OAuth to manage batch jobs, issue certificates, and download PDF archives.
-          </p>
-        </div>
-
-        {!isSupabaseConfigured && (
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-left flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-700">
-              Supabase public keys are not detected in <code className="font-mono bg-amber-100 px-1 py-0.5 rounded">.env.local</code>. Please verify your environment configuration.
-            </p>
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="mt-6 w-full flex items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 hover:border-slate-400 active:scale-[0.99] disabled:opacity-60 transition-all shadow-xs cursor-pointer"
-        >
-          {loading ? (
-            <Loader2 className="h-5 w-5 animate-spin text-amber-500" />
-          ) : (
-            <svg className="h-5 w-5" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12c0 1.97.45 3.82 1.25 5.42l4.03-3.15z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-              />
-            </svg>
-          )}
-          <span>{loading ? 'Connecting to Google...' : 'Continue with Google'}</span>
-        </button>
-
-        {error && (
-          <div role="alert" className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-left flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-red-600">{error}</p>
-          </div>
-        )}
-
-        {onGuestContinue && (
-          <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={onGuestContinue}
-              className="group text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1.5 py-1 px-2 rounded-md hover:bg-slate-50"
-            >
-              <span>Explore Dashboard as Guest</span>
-              <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
-        )}
-
-        <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-          <ShieldCheck className="h-4 w-4 text-emerald-500" />
-          <span>Secured with Supabase Authentication</span>
-        </p>
       </section>
     </main>
   );

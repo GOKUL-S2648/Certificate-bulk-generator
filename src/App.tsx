@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Award } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
@@ -6,6 +7,7 @@ import { supabase } from './lib/supabase.ts';
 import { apiFetch } from './lib/api.ts';
 
 import { LoginView } from './components/LoginView.tsx';
+import { LandingPage } from './components/LandingPage.tsx';
 import { Header } from './components/Header.tsx';
 import { OverviewView } from './components/OverviewView.tsx';
 import { BatchCreatorView } from './components/BatchCreatorView.tsx';
@@ -22,6 +24,7 @@ import type { JobRecord } from './types.ts';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const [showLanding, setShowLanding] = useState(true);
 
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
@@ -98,9 +101,12 @@ export default function App() {
 
     setUser(null);
     setIsGuest(false);
+    setShowLanding(true);
     setJobs([]);
     setActiveJobModalId(null);
     setPreviewCertId(null);
+    setVerifyCertId(null);
+    setIsVerifyModalOpen(false);
   };
 
   // Fetch only jobs belonging to the authenticated user.
@@ -177,6 +183,7 @@ export default function App() {
     setIsVerifyModalOpen(true);
   };
 
+  // Authentication loading screen.
   if (isAuthLoading) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white">
@@ -191,7 +198,17 @@ export default function App() {
     );
   }
 
+  // Landing page and login screen for signed-out visitors.
   if (!user && !isGuest) {
+    if (showLanding) {
+      return (
+        <LandingPage
+          onGetStarted={() => setShowLanding(false)}
+          onSignIn={() => setShowLanding(false)}
+        />
+      );
+    }
+
     return (
       <LoginView
         onGuestContinue={() => setIsGuest(true)}
@@ -199,15 +216,19 @@ export default function App() {
     );
   }
 
+  // Main application dashboard.
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-[#f6f3eb] text-[#26352b] flex flex-col font-sans selection:bg-[#e9eddf] selection:text-[#405b43]">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onNewJobClick={() => setActiveTab('create')}
         user={user}
         onSignOut={handleSignOut}
-        onSignIn={() => setIsGuest(false)}
+        onSignIn={() => {
+          setIsGuest(false);
+          setShowLanding(false);
+        }}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16">
@@ -260,7 +281,7 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
+      <footer className="border-t border-[#e5e3d9] bg-[#fffdf8] py-6 text-xs text-[#898b80]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-slate-800">
